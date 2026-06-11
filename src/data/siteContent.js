@@ -19,7 +19,7 @@ export const values = [
 
 export const eventDetails = [
   { icon: "⌖", label: "地點", lines: ["台南一中", "網球場旁"] },
-  { icon: "◷", label: "時間", lines: ["每週六、日", "19:00–21:00"] },
+  { icon: "◷", label: "時間", lines: ["每週六、日", "18:40–20:50"] },
   { icon: "$", label: "費用", lines: ["NT$100", "／人・現場收費"], smallLastLine: true },
 ];
 
