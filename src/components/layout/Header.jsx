@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { navigation } from "../../data/siteContent";
+import ThemeToggle from "../ui/ThemeToggle";
 
-export default function Header() {
+export default function Header({ theme, onToggleTheme }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -34,6 +35,7 @@ export default function Header() {
           加入 LINE 揪團
         </a>
       </nav>
+      <ThemeToggle theme={theme} onToggle={onToggleTheme} />
     </header>
   );
 }

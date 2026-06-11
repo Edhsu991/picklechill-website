@@ -46,5 +46,6 @@ src/
 - 更新 Logo 或招生圖：替換 `public/assets/` 中的同名圖片
 - 修改某個首頁區塊：`src/components/sections/`
 - 修改網站配色與排版：`src/styles/global.css`
+- 深色模式狀態與偏好儲存：`src/hooks/useTheme.js`
 
 收到 LINE 群組網址後，填入 `src/data/siteContent.js` 的 `lineGroupUrl` 即可。

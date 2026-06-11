@@ -9,13 +9,15 @@ import Hero from "./components/sections/Hero";
 import Services from "./components/sections/Services";
 import Ticker from "./components/sections/Ticker";
 import Toast from "./components/ui/Toast";
+import useTheme from "./hooks/useTheme";
 
 export default function App() {
   const [toastMessage, setToastMessage] = useState("");
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <>
-      <Header />
+      <Header theme={theme} onToggleTheme={toggleTheme} />
       <main id="top">
         <Hero />
         <Ticker />
