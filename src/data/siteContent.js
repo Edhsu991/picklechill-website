@@ -2,7 +2,6 @@ export const navigation = [
   { label: "關於我們", href: "#about" },
   { label: "揪團資訊", href: "#events" },
   { label: "課程服務", href: "#courses" },
-  { label: "教練團隊", href: "#coaches" },
 ];
 
 export const heroHighlights = [

@@ -2,13 +2,13 @@ import { useState } from "react";
 import { navigation } from "../../data/siteContent";
 import ThemeToggle from "../ui/ThemeToggle";
 
-export default function Header({ theme, onToggleTheme }) {
+export default function Header({ theme, onToggleTheme, page }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <header className="site-header">
-      <a className="brand" href="#top" aria-label="回到首頁" onClick={closeMenu}>
+      <a className="brand" href={page === "home" ? "#top" : "#/"} aria-label="回到首頁" onClick={closeMenu}>
         <img src="assets/logo.jpg" alt="匹咖揪 PickleChill Logo" />
         <span>
           <strong>匹咖揪</strong>
@@ -31,8 +31,15 @@ export default function Header({ theme, onToggleTheme }) {
             {item.label}
           </a>
         ))}
+        <a
+          href={page === "scoring" ? "#/" : "#/scoring"}
+          className={page === "scoring" ? "" : "nav-score"}
+          onClick={closeMenu}
+        >
+          {page === "scoring" ? "返回首頁" : "比賽計分"}
+        </a>
         <a href="#contact" className="nav-cta" onClick={closeMenu}>
-          加入 LINE 揪團
+          加入 LINE
         </a>
       </nav>
       <ThemeToggle theme={theme} onToggle={onToggleTheme} />
