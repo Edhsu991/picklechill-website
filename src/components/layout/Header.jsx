@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { navigation } from "../../data/siteContent";
+import { lineGroupUrl, navigation } from "../../data/siteContent";
 import ThemeToggle from "../ui/ThemeToggle";
 
 export default function Header({ theme, onToggleTheme, page }) {
@@ -38,7 +38,13 @@ export default function Header({ theme, onToggleTheme, page }) {
         >
           {page === "scoring" ? "返回首頁" : "比賽計分"}
         </a>
-        <a href="#contact" className="nav-cta" onClick={closeMenu}>
+        <a
+          href={lineGroupUrl}
+          className="nav-cta"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={closeMenu}
+        >
           加入 LINE
         </a>
       </nav>

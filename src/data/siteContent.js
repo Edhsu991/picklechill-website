@@ -92,5 +92,4 @@ export const socialLinks = [
   { label: "YouTube", href: "https://www.youtube.com/@Picklechill1021" },
 ];
 
-// 收到 LINE 群組網址後，只需在這裡填入網址。
-export const lineGroupUrl = "";
+export const lineGroupUrl = "https://line.me/ti/g2/mKZbNe0dhZVd7rHBjv2GZjXy0Xpon3ipYTIGRQ?utm_source=invitation&utm_medium=link_copy&utm_campaign=default";
