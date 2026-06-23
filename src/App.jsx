@@ -10,6 +10,8 @@ import Hero from "./components/sections/Hero";
 import Services from "./components/sections/Services";
 import Ticker from "./components/sections/Ticker";
 import Toast from "./components/ui/Toast";
+import FontSizeControl from "./components/ui/FontSizeControl";
+import useFontSize from "./hooks/useFontSize";
 import useTheme from "./hooks/useTheme";
 
 export default function App() {
@@ -17,6 +19,7 @@ export default function App() {
   const [page, setPage] = useState(() =>
     window.location.hash.startsWith("#/scoring") ? "scoring" : "home",
   );
+  const { fontSize, setFontSize } = useFontSize();
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -55,6 +58,7 @@ export default function App() {
         </main>
       )}
       <Footer />
+      <FontSizeControl fontSize={fontSize} onChange={setFontSize} />
       <Toast message={toastMessage} onDismiss={() => setToastMessage("")} />
     </>
   );
