@@ -340,9 +340,11 @@ export default function TournamentScoring() {
   );
   const [nextRoundGroupSize, setNextRoundGroupSize] = useState(3);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editPin, setEditPin] = useState("");
-  const [editModeError, setEditModeError] = useState("");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isCarouselActive, setIsCarouselActive] = useState(false);
   const [showQuickNav, setShowQuickNav] = useState(false);
+  const scoringPageRef = useRef(null);
+  const stagesRef = useRef(null);
   const workspaceRef = useRef(null);
   const normalizedTeamCount = Number(teamCount) || 0;
   const hasSingleTeam = normalizedTeamCount === 1;
@@ -375,6 +377,28 @@ export default function TournamentScoring() {
       ? standingsFor(activeRound.groups[0], activeRound.matches)
       : [];
   const champion = finalStandings[0] ?? null;
+  const carouselTargets = useMemo(
+    () =>
+      CATEGORIES.flatMap((item) =>
+        competitions[item.id].rounds.flatMap((round) =>
+          round.groups.map((group) => ({
+            categoryId: item.id,
+            categoryName: item.name,
+            roundId: round.id,
+            roundName: round.name,
+            groupId: group.id,
+            groupName: group.name,
+          })),
+        ),
+      ),
+    [competitions],
+  );
+  const activeCarouselIndex = carouselTargets.findIndex(
+    (target) =>
+      target.categoryId === activeCategory &&
+      target.roundId === activeRound.id &&
+      target.groupId === activeGroup?.id,
+  );
 
   const persist = (nextTournament) => {
     const nextCompetitions = { ...competitions, [activeCategory]: nextTournament };
@@ -385,23 +409,8 @@ export default function TournamentScoring() {
     );
   };
 
-  const handleEditModeSubmit = (event) => {
-    event.preventDefault();
-
-    if (editPin === EDIT_MODE_PIN) {
-      setIsEditMode(true);
-      setEditPin("");
-      setEditModeError("");
-      return;
-    }
-
-    setEditModeError("PIN 碼不正確，請重新輸入。");
-  };
-
   const exitEditMode = () => {
     setIsEditMode(false);
-    setEditPin("");
-    setEditModeError("");
   };
 
   const handleGenerate = () => {
@@ -520,6 +529,25 @@ export default function TournamentScoring() {
     setNextRoundGroupSize(3);
   };
 
+  const selectCarouselTarget = (target) => {
+    const nextTournament = competitions[target.categoryId];
+
+    setActiveCategory(target.categoryId);
+    setTeamCount(String(nextTournament.teams.length));
+    setGroupSize(
+      Math.min(5, Math.max(2, nextTournament.rounds[0]?.groups[0]?.teams.length ?? 3)),
+    );
+    setActiveRoundId(target.roundId);
+    setActiveGroupId(target.groupId);
+    setNextRoundGroupSize(3);
+  };
+
+  const scrollToStages = () => {
+    window.requestAnimationFrame(() => {
+      stagesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
   const scrollToWorkspace = () => {
     window.requestAnimationFrame(() => {
       workspaceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -536,6 +564,45 @@ export default function TournamentScoring() {
     scrollToWorkspace();
   };
 
+  const toggleFullscreen = async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+        return;
+      }
+
+      await scoringPageRef.current?.requestFullscreen?.();
+    } catch {
+      // Ignore unsupported or denied fullscreen requests.
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  useEffect(() => {
+    if (isEditMode) setIsCarouselActive(false);
+  }, [isEditMode]);
+
+  useEffect(() => {
+    if (!isCarouselActive || isEditMode || carouselTargets.length < 2) return undefined;
+
+    const intervalId = window.setInterval(() => {
+      const currentIndex = activeCarouselIndex >= 0 ? activeCarouselIndex : 0;
+      const nextTarget = carouselTargets[(currentIndex + 1) % carouselTargets.length];
+      selectCarouselTarget(nextTarget);
+      scrollToWorkspace();
+    }, 8000);
+
+    return () => window.clearInterval(intervalId);
+  }, [activeCarouselIndex, carouselTargets, isCarouselActive, isEditMode]);
+
   useEffect(() => {
     const handleScroll = () => {
       const workspaceTop = workspaceRef.current?.getBoundingClientRect().top ?? Infinity;
@@ -550,7 +617,7 @@ export default function TournamentScoring() {
   const teamName = (teamId) => tournament.teams.find((team) => team.id === teamId)?.name ?? "";
 
   return (
-    <section className="scoring-page">
+    <section className="scoring-page" ref={scoringPageRef}>
       <div className="scoring-hero">
         <div>
           <p className="eyebrow"><span /> TOURNAMENT SCORING</p>
@@ -604,107 +671,117 @@ export default function TournamentScoring() {
           <p>
             {isEditMode
               ? "可輸入比分、修改隊伍、指定場地、清除比分與建立下一輪。操作完成後建議退出編輯模式。"
-              : "觀看模式只能瀏覽比分、排名與賽程；需要輸入比分時，請先輸入工作人員 PIN。"}
+              : "觀看模式已簡化為現場展示；可直接進入比賽階段、放大全螢幕，或啟動輪播自動切換場次。"}
           </p>
-          <small>目前為前端 PIN 防誤觸機制，尚不等同後端帳號權限。</small>
-        </div>
-        {isEditMode ? (
-          <button type="button" className="mode-exit-button" onClick={exitEditMode}>
-            退出編輯模式
-          </button>
-        ) : (
-          <form className="mode-pin-form" onSubmit={handleEditModeSubmit}>
-            <label>
-              <span>工作人員 PIN</span>
-              <input
-                type="password"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={editPin}
-                onChange={(event) => {
-                  setEditPin(event.target.value.replace(/\D/g, ""));
-                  setEditModeError("");
-                }}
-                placeholder="輸入 PIN"
-                aria-label="工作人員 PIN"
-              />
-            </label>
-            <button type="submit">進入編輯模式</button>
-            {editModeError && <small role="alert">{editModeError}</small>}
-          </form>
-        )}
-      </div>
-
-      <div className="tournament-setup">
-        <div className="setup-heading">
-          <div>
-            <span>STEP 01・{category.englishName}</span>
-            <h2>建立{category.name}比賽</h2>
+          <div className="mode-meta-row">
+            <strong>工作人員 PIN：{EDIT_MODE_PIN}</strong>
+            <small>前端防誤觸機制，尚不等同後端帳號權限。</small>
           </div>
-          <p>系統會平均分配隊伍，並產生同組內每兩隊交手一次的賽程。</p>
         </div>
-        <div className="setup-controls">
-          <label>
-            <span>參賽隊伍總數</span>
-            <input
-              type="number"
-              min="1"
-              max="60"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={teamCount}
-              disabled={!isEditMode}
-              onChange={handleTeamCountChange}
-              onBlur={() => {
-                if (isEditMode && (teamCount === "" || normalizedTeamCount < 1)) setTeamCount("1");
-              }}
-            />
-            <small>可輸入 1–60 隊</small>
-            {hasSingleTeam && (
-              <span className="team-count-warning" role="alert">
-                目前僅輸入一隊
-              </span>
-            )}
-          </label>
-          <label>
-            <span>每組隊伍數</span>
-            <select
-              value={groupSize}
-              disabled={!isEditMode}
-              onChange={(event) => setGroupSize(Number(event.target.value))}
-            >
-              {[2, 3, 4, 5].map((size) => (
-                <option value={size} key={size}>{size} 隊</option>
-              ))}
-            </select>
-            <small>可選 2–5 隊</small>
-          </label>
+        <div className="mode-action-grid">
+          <button type="button" onClick={scrollToStages}>跳到比賽階段</button>
+          <button type="button" onClick={toggleFullscreen}>
+            {isFullscreen ? "離開全螢幕" : "放大全螢幕"}
+          </button>
           <button
             type="button"
-            className="generate-button"
-            onClick={handleGenerate}
-            disabled={!isEditMode || !canGenerate}
+            className={isCarouselActive ? "active" : ""}
+            onClick={() => {
+              setIsCarouselActive((current) => !current);
+              scrollToWorkspace();
+            }}
+            disabled={isEditMode || carouselTargets.length < 2}
           >
-            {isEditMode ? "產生分組與賽程" : "觀看模式不可產生賽程"} <span>↗</span>
+            {isCarouselActive ? "停止輪播" : "開始輪播"}
           </button>
-        </div>
-        <div className="group-plan-preview" aria-live="polite">
-          <div>
-            <span>預計分組</span>
-            <strong>{groupPlan.groupCount} 組</strong>
-          </div>
-          <div>
-            <span>隊伍分配</span>
-            <strong>{groupPlan.distribution}</strong>
-          </div>
-          <div>
-            <span>小組賽總場次</span>
-            <strong>{groupPlan.matchCount} 場</strong>
-          </div>
+          <button
+            type="button"
+            className="mode-edit-button"
+            onClick={() => setIsEditMode(true)}
+            disabled={isEditMode}
+          >
+            {isEditMode ? "編輯模式中" : "進入編輯模式"}
+          </button>
+          {isEditMode && (
+            <button type="button" className="mode-exit-button" onClick={exitEditMode}>
+              退出編輯模式
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="round-navigation-wrap">
+      {isEditMode && (
+        <div className="tournament-setup">
+          <div className="setup-heading">
+            <div>
+              <span>STEP 01・{category.englishName}</span>
+              <h2>建立{category.name}比賽</h2>
+            </div>
+            <p>系統會平均分配隊伍，並產生同組內每兩隊交手一次的賽程。</p>
+          </div>
+          <div className="setup-controls">
+            <label>
+              <span>參賽隊伍總數</span>
+              <input
+                type="number"
+                min="1"
+                max="60"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={teamCount}
+                disabled={!isEditMode}
+                onChange={handleTeamCountChange}
+                onBlur={() => {
+                  if (isEditMode && (teamCount === "" || normalizedTeamCount < 1)) setTeamCount("1");
+                }}
+              />
+              <small>可輸入 1–60 隊</small>
+              {hasSingleTeam && (
+                <span className="team-count-warning" role="alert">
+                  目前僅輸入一隊
+                </span>
+              )}
+            </label>
+            <label>
+              <span>每組隊伍數</span>
+              <select
+                value={groupSize}
+                disabled={!isEditMode}
+                onChange={(event) => setGroupSize(Number(event.target.value))}
+              >
+                {[2, 3, 4, 5].map((size) => (
+                  <option value={size} key={size}>{size} 隊</option>
+                ))}
+              </select>
+              <small>可選 2–5 隊</small>
+            </label>
+            <button
+              type="button"
+              className="generate-button"
+              onClick={handleGenerate}
+              disabled={!isEditMode || !canGenerate}
+            >
+              產生分組與賽程 <span>↗</span>
+            </button>
+          </div>
+          <div className="group-plan-preview" aria-live="polite">
+            <div>
+              <span>預計分組</span>
+              <strong>{groupPlan.groupCount} 組</strong>
+            </div>
+            <div>
+              <span>隊伍分配</span>
+              <strong>{groupPlan.distribution}</strong>
+            </div>
+            <div>
+              <span>小組賽總場次</span>
+              <strong>{groupPlan.matchCount} 場</strong>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="round-navigation-wrap" ref={stagesRef}>
         <div className="round-navigation-heading">
           <span>TOURNAMENT STAGES</span>
           <strong>{category.name}比賽階段</strong>
@@ -751,14 +828,16 @@ export default function TournamentScoring() {
               );
             })}
           </div>
-          <button
-            type="button"
-            className="clear-button"
-            onClick={clearScores}
-            disabled={!canEditActiveRound}
-          >
-            {!isEditMode ? "觀看模式不可清除" : roundLocked ? "此輪已鎖定" : "清除此輪比分"}
-          </button>
+          {isEditMode && (
+            <button
+              type="button"
+              className="clear-button"
+              onClick={clearScores}
+              disabled={!canEditActiveRound}
+            >
+              {roundLocked ? "此輪已鎖定" : "清除此輪比分"}
+            </button>
+          )}
         </div>
 
         {activeGroup && (
@@ -900,7 +979,7 @@ export default function TournamentScoring() {
               </p>
             </div>
 
-            {isLatestRound && roundComplete && (
+            {isLatestRound && roundComplete && (champion || isEditMode) && (
               <div className="round-advance-panel">
                 {champion ? (
                   <div className="champion-result">

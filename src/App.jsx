@@ -9,6 +9,7 @@ import Events from "./components/sections/Events";
 import Hero from "./components/sections/Hero";
 import Services from "./components/sections/Services";
 import Ticker from "./components/sections/Ticker";
+import SiteNotice from "./components/ui/SiteNotice";
 import Toast from "./components/ui/Toast";
 import FontSizeControl from "./components/ui/FontSizeControl";
 import useFontSize from "./hooks/useFontSize";
@@ -16,6 +17,7 @@ import useTheme from "./hooks/useTheme";
 
 export default function App() {
   const [toastMessage, setToastMessage] = useState("");
+  const [showSiteNotice, setShowSiteNotice] = useState(true);
   const [page, setPage] = useState(() =>
     window.location.hash.startsWith("#/scoring") ? "scoring" : "home",
   );
@@ -60,6 +62,7 @@ export default function App() {
       <Footer />
       <FontSizeControl fontSize={fontSize} onChange={setFontSize} />
       <Toast message={toastMessage} onDismiss={() => setToastMessage("")} />
+      {showSiteNotice && <SiteNotice onDismiss={() => setShowSiteNotice(false)} />}
     </>
   );
 }
