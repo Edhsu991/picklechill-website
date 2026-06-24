@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const STORAGE_KEY = "picklechill-tournament-v1";
+const EDIT_MODE_PIN = "2468";
 const CATEGORIES = [
   { id: "mens", name: "男雙", englishName: "MEN'S DOUBLES" },
   { id: "womens", name: "女雙", englishName: "WOMEN'S DOUBLES" },
@@ -338,6 +339,9 @@ export default function TournamentScoring() {
     tournament.rounds[tournament.rounds.length - 1]?.groups[0]?.id,
   );
   const [nextRoundGroupSize, setNextRoundGroupSize] = useState(3);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editPin, setEditPin] = useState("");
+  const [editModeError, setEditModeError] = useState("");
   const [showQuickNav, setShowQuickNav] = useState(false);
   const workspaceRef = useRef(null);
   const normalizedTeamCount = Number(teamCount) || 0;
@@ -364,6 +368,7 @@ export default function TournamentScoring() {
   const roundComplete = roundWinners.length === activeRound.groups.length;
   const isLatestRound = activeRoundIndex === tournament.rounds.length - 1;
   const roundLocked = !isLatestRound;
+  const canEditActiveRound = isEditMode && !roundLocked;
   const canCreateNextRound = isLatestRound && roundComplete && roundWinners.length > 1;
   const finalStandings =
     roundComplete && activeRound.groups.length === 1
@@ -380,8 +385,27 @@ export default function TournamentScoring() {
     );
   };
 
+  const handleEditModeSubmit = (event) => {
+    event.preventDefault();
+
+    if (editPin === EDIT_MODE_PIN) {
+      setIsEditMode(true);
+      setEditPin("");
+      setEditModeError("");
+      return;
+    }
+
+    setEditModeError("PIN 碼不正確，請重新輸入。");
+  };
+
+  const exitEditMode = () => {
+    setIsEditMode(false);
+    setEditPin("");
+    setEditModeError("");
+  };
+
   const handleGenerate = () => {
-    if (!canGenerate) return;
+    if (!isEditMode || !canGenerate) return;
 
     const nextTournament = createTournament(normalizedTeamCount, groupSize);
     persist(nextTournament);
@@ -390,6 +414,8 @@ export default function TournamentScoring() {
   };
 
   const handleTeamCountChange = (event) => {
+    if (!isEditMode) return;
+
     const value = event.target.value.replace(/\D/g, "");
     if (value === "") {
       setTeamCount("");
@@ -400,6 +426,8 @@ export default function TournamentScoring() {
   };
 
   const handleTeamName = (teamId, name) => {
+    if (!canEditActiveRound) return;
+
     const teams = tournament.teams.map((team) => (team.id === teamId ? { ...team, name } : team));
     const rounds = tournament.rounds.map((round) => ({
       ...round,
@@ -412,7 +440,7 @@ export default function TournamentScoring() {
   };
 
   const handleScore = (matchId, field, value) => {
-    if (roundLocked) return;
+    if (!canEditActiveRound) return;
     const cleanValue = value === "" ? "" : Math.max(0, Number.parseInt(value, 10) || 0);
     const rounds = tournament.rounds.map((round) => (
       round.id === activeRound.id
@@ -428,7 +456,7 @@ export default function TournamentScoring() {
   };
 
   const handleVenue = (matchId, venue) => {
-    if (roundLocked) return;
+    if (!canEditActiveRound) return;
     const rounds = tournament.rounds.map((round) => (
       round.id === activeRound.id
         ? {
@@ -443,7 +471,7 @@ export default function TournamentScoring() {
   };
 
   const clearScores = () => {
-    if (roundLocked) return;
+    if (!canEditActiveRound) return;
     const rounds = tournament.rounds.map((round) => (
       round.id === activeRound.id
         ? {
@@ -460,7 +488,7 @@ export default function TournamentScoring() {
   };
 
   const createNextRound = () => {
-    if (!canCreateNextRound) return;
+    if (!isEditMode || !canCreateNextRound) return;
 
     const roundNumber = tournament.rounds.length + 1;
     const preferredSize = Math.min(
@@ -569,6 +597,44 @@ export default function TournamentScoring() {
         </div>
       </div>
 
+      <div className={`scoring-mode-panel${isEditMode ? " editing" : ""}`}>
+        <div>
+          <span>{isEditMode ? "EDIT MODE" : "VIEW MODE"}</span>
+          <h2>{isEditMode ? "編輯模式已開啟" : "目前為觀看模式"}</h2>
+          <p>
+            {isEditMode
+              ? "可輸入比分、修改隊伍、指定場地、清除比分與建立下一輪。操作完成後建議退出編輯模式。"
+              : "觀看模式只能瀏覽比分、排名與賽程；需要輸入比分時，請先輸入工作人員 PIN。"}
+          </p>
+          <small>目前為前端 PIN 防誤觸機制，尚不等同後端帳號權限。</small>
+        </div>
+        {isEditMode ? (
+          <button type="button" className="mode-exit-button" onClick={exitEditMode}>
+            退出編輯模式
+          </button>
+        ) : (
+          <form className="mode-pin-form" onSubmit={handleEditModeSubmit}>
+            <label>
+              <span>工作人員 PIN</span>
+              <input
+                type="password"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={editPin}
+                onChange={(event) => {
+                  setEditPin(event.target.value.replace(/\D/g, ""));
+                  setEditModeError("");
+                }}
+                placeholder="輸入 PIN"
+                aria-label="工作人員 PIN"
+              />
+            </label>
+            <button type="submit">進入編輯模式</button>
+            {editModeError && <small role="alert">{editModeError}</small>}
+          </form>
+        )}
+      </div>
+
       <div className="tournament-setup">
         <div className="setup-heading">
           <div>
@@ -587,9 +653,10 @@ export default function TournamentScoring() {
               inputMode="numeric"
               pattern="[0-9]*"
               value={teamCount}
+              disabled={!isEditMode}
               onChange={handleTeamCountChange}
               onBlur={() => {
-                if (teamCount === "" || normalizedTeamCount < 1) setTeamCount("1");
+                if (isEditMode && (teamCount === "" || normalizedTeamCount < 1)) setTeamCount("1");
               }}
             />
             <small>可輸入 1–60 隊</small>
@@ -601,7 +668,11 @@ export default function TournamentScoring() {
           </label>
           <label>
             <span>每組隊伍數</span>
-            <select value={groupSize} onChange={(event) => setGroupSize(Number(event.target.value))}>
+            <select
+              value={groupSize}
+              disabled={!isEditMode}
+              onChange={(event) => setGroupSize(Number(event.target.value))}
+            >
               {[2, 3, 4, 5].map((size) => (
                 <option value={size} key={size}>{size} 隊</option>
               ))}
@@ -612,9 +683,9 @@ export default function TournamentScoring() {
             type="button"
             className="generate-button"
             onClick={handleGenerate}
-            disabled={!canGenerate}
+            disabled={!isEditMode || !canGenerate}
           >
-            產生分組與賽程 <span>↗</span>
+            {isEditMode ? "產生分組與賽程" : "觀看模式不可產生賽程"} <span>↗</span>
           </button>
         </div>
         <div className="group-plan-preview" aria-live="polite">
@@ -684,9 +755,9 @@ export default function TournamentScoring() {
             type="button"
             className="clear-button"
             onClick={clearScores}
-            disabled={roundLocked}
+            disabled={!canEditActiveRound}
           >
-            {roundLocked ? "此輪已鎖定" : "清除此輪比分"}
+            {!isEditMode ? "觀看模式不可清除" : roundLocked ? "此輪已鎖定" : "清除此輪比分"}
           </button>
         </div>
 
@@ -708,7 +779,7 @@ export default function TournamentScoring() {
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <input
                     value={team.name}
-                    disabled={roundLocked}
+                    disabled={!canEditActiveRound}
                     aria-label={`${activeGroup.name}第 ${index + 1} 隊名稱`}
                     onChange={(event) => handleTeamName(team.id, event.target.value)}
                   />
@@ -718,8 +789,12 @@ export default function TournamentScoring() {
 
             <div className="score-section">
               <div className="subsection-heading">
-                <h3>比分輸入</h3>
-                <small>比分不可相同；平手場次不列入排名</small>
+                <h3>{isEditMode ? "比分輸入" : "比分檢視"}</h3>
+                <small>
+                  {isEditMode
+                    ? "比分不可相同；平手場次不列入排名"
+                    : "觀看模式已鎖定輸入欄位"}
+                </small>
               </div>
               <div className="match-list">
                 {activeMatches.map((match, index) => {
@@ -736,7 +811,7 @@ export default function TournamentScoring() {
                         min="0"
                         inputMode="numeric"
                         value={match.homeScore}
-                        disabled={roundLocked}
+                        disabled={!canEditActiveRound}
                         aria-label={`${teamName(match.homeId)}得分`}
                         onChange={(event) => handleScore(match.id, "homeScore", event.target.value)}
                       />
@@ -746,7 +821,7 @@ export default function TournamentScoring() {
                         min="0"
                         inputMode="numeric"
                         value={match.awayScore}
-                        disabled={roundLocked}
+                        disabled={!canEditActiveRound}
                         aria-label={`${teamName(match.awayId)}得分`}
                         onChange={(event) => handleScore(match.id, "awayScore", event.target.value)}
                       />
@@ -755,7 +830,7 @@ export default function TournamentScoring() {
                         <span>場地</span>
                         <select
                           value={match.venue ?? ""}
-                          disabled={roundLocked}
+                          disabled={!canEditActiveRound}
                           aria-label={`${teamName(match.homeId)}對${teamName(match.awayId)}比賽場地`}
                           onChange={(event) => handleVenue(match.id, event.target.value)}
                         >
@@ -860,6 +935,7 @@ export default function TournamentScoring() {
                       <span>下一輪每組隊伍數</span>
                       <select
                         value={Math.min(nextRoundGroupSize, Math.min(5, roundWinners.length))}
+                        disabled={!isEditMode}
                         onChange={(event) => setNextRoundGroupSize(Number(event.target.value))}
                       >
                         {Array.from(
@@ -870,8 +946,8 @@ export default function TournamentScoring() {
                         ))}
                       </select>
                     </label>
-                    <button type="button" onClick={createNextRound}>
-                      晉級並建立下一輪 <span>↗</span>
+                    <button type="button" onClick={createNextRound} disabled={!isEditMode}>
+                      {isEditMode ? "晉級並建立下一輪" : "觀看模式不可建立下一輪"} <span>↗</span>
                     </button>
                   </>
                 )}

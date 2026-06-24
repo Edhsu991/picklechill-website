@@ -334,6 +334,53 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
 .category-tabs small { color: var(--muted-text); font: 8px "Archivo Black"; letter-spacing: .12em; }
 .category-tabs button.active small { color: rgba(255,255,255,.62); }
 .category-tabs b { align-self: end; font-size: 10px; }
+.scoring-mode-panel {
+  max-width: 1180px;
+  margin: 48px auto 0;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 18px 45px var(--shadow);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  align-items: center;
+  gap: 24px;
+}
+.scoring-mode-panel.editing { border-color: color-mix(in srgb, var(--green) 42%, var(--line)); }
+.scoring-mode-panel span { color: var(--teal); font: 9px "Archivo Black"; letter-spacing: .14em; }
+.scoring-mode-panel h2 { margin: 7px 0 8px; font-size: 28px; letter-spacing: -.04em; }
+.scoring-mode-panel p { margin: 0; color: var(--muted-text); font-size: 12px; line-height: 1.8; }
+.scoring-mode-panel small { display: block; margin-top: 8px; color: var(--muted-text); font-size: 10px; line-height: 1.6; }
+.mode-pin-form { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 10px; }
+.mode-pin-form label { display: grid; gap: 7px; }
+.mode-pin-form label span { color: var(--muted-text); font: 10px sans-serif; font-weight: 800; letter-spacing: 0; }
+.mode-pin-form input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  outline: 0;
+  color: var(--ink);
+  background: var(--muted-surface);
+  font-size: 16px;
+  font-weight: 900;
+}
+.mode-pin-form button, .mode-exit-button {
+  min-height: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  color: var(--white);
+  background: var(--green);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.mode-exit-button { justify-self: end; background: var(--deep); }
+.mode-pin-form > small { grid-column: 1/-1; margin: 0; color: #bd4d3d; font-weight: 900; }
 .tournament-setup { padding: 80px max(24px, calc((100vw - 1180px) / 2)); background: var(--yellow); color: var(--on-yellow); }
 .setup-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: end; }
 .setup-heading span, .workspace-title > span { font: 11px "Archivo Black"; letter-spacing: .15em; }
@@ -344,6 +391,7 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
 .setup-controls label > span { grid-column: 1/-1; font-size: 12px; font-weight: 800; }
 .setup-controls input, .setup-controls select { width: 100%; border: 0; outline: 0; color: var(--on-yellow); background: transparent; font: 38px "Archivo Black"; }
 .setup-controls select { cursor: pointer; }
+.setup-controls input:disabled, .setup-controls select:disabled { cursor: not-allowed; opacity: .48; }
 .setup-controls small { align-self: end; font-size: 10px; font-weight: 700; opacity: .58; }
 .generate-button { border: 0; border-radius: 20px; padding: 24px; color: var(--white); background: var(--deep); cursor: pointer; display: flex; justify-content: space-between; align-items: flex-end; font-size: 15px; font-weight: 900; }
 .generate-button span { font-size: 30px; }
@@ -430,6 +478,7 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
 .advance-group-size span { color: rgba(255,255,255,.62); font-size: 9px; font-weight: 800; }
 .advance-group-size select { height: 48px; padding: 0 12px; border: 1px solid rgba(255,255,255,.22); border-radius: 11px; outline: 0; color: var(--white); background: rgba(0,0,0,.13); cursor: pointer; font-weight: 900; }
 .round-advance-panel > button { min-height: 68px; padding: 15px; border: 0; border-radius: 13px; color: var(--on-yellow); background: var(--yellow); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 12px; font-weight: 900; }
+.round-advance-panel > button:disabled { cursor: not-allowed; opacity: .52; }
 .round-advance-panel > button span { font-size: 22px; }
 .champion-result { grid-column: 1/-1; display: grid; gap: 8px; text-align: center; }
 .champion-result small { color: rgba(255,255,255,.65); }
@@ -495,6 +544,8 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
   .scoring-hero { grid-template-columns: 1fr; gap: 40px; }
   .scoring-rule-card { max-width: 520px; }
   .category-heading { grid-template-columns: 1fr; gap: 12px; }
+  .scoring-mode-panel { width: calc(100% - 48px); grid-template-columns: 1fr; }
+  .mode-exit-button { justify-self: start; }
   .round-navigation-wrap { width: calc(100% - 48px); grid-template-columns: 1fr; align-items: start; }
   .tournament-workspace { width: calc(100% - 48px); grid-template-columns: 1fr; }
   .group-sidebar { position: static; }
@@ -548,6 +599,10 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
   .category-heading h2 { font-size: 30px; }
   .category-tabs { grid-template-columns: 1fr; }
   .category-tabs button { min-height: 120px; }
+  .scoring-mode-panel { width: calc(100% - 32px); margin-top: 32px; padding: 20px; border-radius: 20px; }
+  .scoring-mode-panel h2 { font-size: 24px; }
+  .mode-pin-form { grid-template-columns: 1fr; }
+  .mode-pin-form button, .mode-exit-button { width: 100%; }
   .setup-heading { grid-template-columns: 1fr; gap: 18px; }
   .setup-controls { grid-template-columns: 1fr; }
   .setup-controls label { min-height: 120px; }
