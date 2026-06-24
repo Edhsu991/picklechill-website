@@ -269,11 +269,15 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: opacity .2s;
 }
 .font-size-control > span { color: var(--muted-text); font-size: 9px; font-weight: 800; }
 .font-size-control > div { display: flex; gap: 3px; }
 .font-size-control button { width: 30px; height: 30px; padding: 0; border: 0; border-radius: 50%; color: var(--muted-text); background: transparent; cursor: pointer; font-size: 11px; font-weight: 900; }
 .font-size-control button.active { color: var(--white); background: var(--green); }
+.font-size-control.near-footer { opacity: .22; }
+.font-size-control.near-footer:hover,
+.font-size-control.near-footer:focus-within { opacity: 1; }
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s, transform .7s; }
 .reveal.delay { transition-delay: .12s; }
 .reveal.delay-two { transition-delay: .24s; }
