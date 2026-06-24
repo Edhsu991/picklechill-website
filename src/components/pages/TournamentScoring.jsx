@@ -185,15 +185,111 @@ function isCompleted(match) {
   );
 }
 
+function splitByValue(items, getValue) {
+  const groups = [];
+
+  items.forEach((item) => {
+    const value = getValue(item);
+    const lastGroup = groups.at(-1);
+
+    if (lastGroup && Object.is(lastGroup.value, value)) {
+      lastGroup.items.push(item);
+    } else {
+      groups.push({ value, items: [item] });
+    }
+  });
+
+  return groups;
+}
+
+function completedMatchesForTeamSet(matches, groupId, teamIds) {
+  return matches.filter(
+    (match) =>
+      match.groupId === groupId &&
+      isCompleted(match) &&
+      teamIds.has(match.homeId) &&
+      teamIds.has(match.awayId),
+  );
+}
+
+function applyTieBreakers(rows, matches, groupId) {
+  const sortByOriginalOrder = (items) => [...items].sort((a, b) => a.originalIndex - b.originalIndex);
+
+  const resolveTiedRows = (tiedRows) => {
+    if (tiedRows.length <= 1) return tiedRows;
+
+    const teamIds = new Set(tiedRows.map((row) => row.id));
+    const relatedMatches = completedMatchesForTeamSet(matches, groupId, teamIds);
+    const headToHeadWins = Object.fromEntries(tiedRows.map((row) => [row.id, 0]));
+
+    relatedMatches.forEach((match) => {
+      const homeScore = Number(match.homeScore);
+      const awayScore = Number(match.awayScore);
+
+      if (homeScore > awayScore) {
+        headToHeadWins[match.homeId] += 1;
+      } else {
+        headToHeadWins[match.awayId] += 1;
+      }
+    });
+
+    return splitByValue(
+      [...tiedRows].sort(
+        (a, b) => headToHeadWins[b.id] - headToHeadWins[a.id] || a.originalIndex - b.originalIndex,
+      ),
+      (row) => headToHeadWins[row.id],
+    ).flatMap((headToHeadGroup) => {
+      if (headToHeadGroup.items.length <= 1) return headToHeadGroup.items;
+
+      const remainingIds = new Set(headToHeadGroup.items.map((row) => row.id));
+      const remainingMatches = completedMatchesForTeamSet(matches, groupId, remainingIds);
+      const relatedConceded = Object.fromEntries(headToHeadGroup.items.map((row) => [row.id, 0]));
+
+      remainingMatches.forEach((match) => {
+        relatedConceded[match.homeId] += Number(match.awayScore);
+        relatedConceded[match.awayId] += Number(match.homeScore);
+      });
+
+      return splitByValue(
+        [...headToHeadGroup.items].sort(
+          (a, b) => relatedConceded[a.id] - relatedConceded[b.id] || a.originalIndex - b.originalIndex,
+        ),
+        (row) => relatedConceded[row.id],
+      ).flatMap((concededGroup) => {
+        if (concededGroup.items.length <= 1) return concededGroup.items;
+
+        return sortByOriginalOrder(concededGroup.items).map((row) => ({
+          ...row,
+          needsDraw: true,
+        }));
+      });
+    });
+  };
+
+  return splitByValue(
+    [...rows].sort((a, b) => b.wins - a.wins || a.originalIndex - b.originalIndex),
+    (row) => row.wins,
+  ).flatMap((winGroup) =>
+    splitByValue(
+      [...winGroup.items].sort(
+        (a, b) => b.difference - a.difference || a.originalIndex - b.originalIndex,
+      ),
+      (row) => row.difference,
+    ).flatMap((differenceGroup) => resolveTiedRows(differenceGroup.items)),
+  );
+}
+
 function standingsFor(group, matches) {
-  const rows = group.teams.map((team) => ({
+  const rows = group.teams.map((team, index) => ({
     ...team,
+    originalIndex: index,
     played: 0,
     wins: 0,
     losses: 0,
     scored: 0,
     conceded: 0,
     difference: 0,
+    needsDraw: false,
   }));
   const rowById = Object.fromEntries(rows.map((row) => [row.id, row]));
 
@@ -223,13 +319,7 @@ function standingsFor(group, matches) {
     row.difference = row.scored - row.conceded;
   });
 
-  return rows.sort(
-    (a, b) =>
-      b.wins - a.wins ||
-      b.difference - a.difference ||
-      b.scored - a.scored ||
-      a.name.localeCompare(b.name, "zh-Hant"),
-  );
+  return applyTieBreakers(rows, matches, group.id);
 }
 
 export default function TournamentScoring() {
@@ -439,15 +529,17 @@ export default function TournamentScoring() {
           <h1>比賽<br /><em>計分台</em></h1>
           <p>
             建立 2–60 隊賽事，自動安排小組循環對戰。輸入每場比分後，
-            系統會依勝場與總分差即時計算排名。
+            系統會依預賽排名規則即時計算排名。
           </p>
         </div>
         <aside className="scoring-rule-card">
-          <span>排名規則</span>
+          <span>預賽排名規則</span>
           <ol>
-            <li><strong>勝場數</strong><small>勝場較多者優先</small></li>
-            <li><strong>總分差</strong><small>總得分 − 總失分</small></li>
-            <li><strong>總得分</strong><small>仍同分時比較得分</small></li>
+            <li><strong>勝場</strong><small>勝場較多者優先</small></li>
+            <li><strong>比數分差</strong><small>總得分 − 總失分</small></li>
+            <li><strong>相關隊伍勝負</strong><small>仍並列時，比較相關隊伍互戰勝負</small></li>
+            <li><strong>相關隊伍總失分</strong><small>總失分較少者優先</small></li>
+            <li><strong>抽籤</strong><small>以上仍相同時，以抽籤決定名次</small></li>
           </ol>
         </aside>
       </div>
@@ -684,7 +776,7 @@ export default function TournamentScoring() {
               <div className="subsection-heading">
                 <h3>即時排名</h3>
                 <small className="standings-heading-note">
-                  總得失分 <sup>＊</sup>
+                  預賽規則 <sup>＊</sup>
                 </small>
               </div>
               <div className="standings-table-wrap">
@@ -710,6 +802,9 @@ export default function TournamentScoring() {
                           {index === 0 && groupComplete && (
                             <small>{champion ? "冠軍" : "晉級"}</small>
                           )}
+                          {team.needsDraw && (
+                            <small className="draw-needed">需抽籤</small>
+                          )}
                         </td>
                         <td>{team.played}</td>
                         <td>{team.wins}</td>
@@ -725,7 +820,8 @@ export default function TournamentScoring() {
                 </table>
               </div>
               <p className="standings-formula-note">
-                <sup>＊</sup> 總分差 = 總得分 − 總失分
+                <sup>＊</sup> 排名依序比較：勝場 → 總分差 → 相關隊伍勝負 → 相關隊伍總失分；仍相同時需抽籤。
+                總分差 = 總得分 − 總失分
               </p>
             </div>
 
@@ -748,7 +844,7 @@ export default function TournamentScoring() {
                         <strong>{finalStandings[2]?.name ?? "未產生"}</strong>
                       </div>
                     </div>
-                    <small>最終名次依勝場、總分差、總得分排序</small>
+                    <small>最終名次依預賽排名規則排序；仍相同時需抽籤。</small>
                   </div>
                 ) : (
                   <>
