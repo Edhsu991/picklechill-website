@@ -503,6 +503,26 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
 }
 .venue-steps span { color: var(--teal); font: 24px "Archivo Black"; }
 .venue-steps p { margin: 0; color: var(--ink); font-size: 18px; font-weight: 800; line-height: 1.7; }
+.venue-map-wrap { margin-top: 70px; }
+.venue-map-wrap .subsection-heading a {
+  color: var(--green);
+  border-bottom: 1px solid currentColor;
+  font-size: 12px;
+  font-weight: 900;
+}
+.venue-map {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: 0 14px 34px var(--shadow);
+  overflow: hidden;
+}
+.venue-map iframe {
+  width: 100%;
+  min-height: 430px;
+  border: 0;
+  display: block;
+}
 .venue-gallery-wrap { margin-top: 70px; }
 .venue-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .venue-photo-card {
@@ -854,11 +874,12 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
   .venue-page { padding-top: 112px; padding-bottom: 78px; }
   .venue-hero h1 { font-size: 54px; }
   .venue-summary { font-size: 17px; }
-  .venue-layout, .venue-gallery-wrap { margin-top: 44px; }
+  .venue-layout, .venue-map-wrap, .venue-gallery-wrap { margin-top: 44px; }
   .venue-card { min-height: 260px; padding: 26px; }
   .venue-card h2 { font-size: 38px; }
   .venue-steps li { grid-template-columns: 44px 1fr; padding: 20px; }
   .venue-steps p { font-size: 16px; }
+  .venue-map iframe { min-height: 330px; }
   .venue-gallery { grid-template-columns: 1fr; }
   .about-heading h2 { font-size: 42px; }
   .about-content .lead { font-size: 20px; }

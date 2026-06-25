@@ -28,6 +28,24 @@ export default function VenueInfo() {
         </Reveal>
       </div>
 
+      <Reveal className="venue-map-wrap">
+        <div className="subsection-heading">
+          <h3>Google Map</h3>
+          <a href={venueInfo.mapExternalUrl} target="_blank" rel="noopener noreferrer">
+            開啟 Google Maps ↗
+          </a>
+        </div>
+        <div className="venue-map">
+          <iframe
+            title="台南一中網球場 Google Map"
+            src={venueInfo.mapEmbedUrl}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+        </div>
+      </Reveal>
+
       <Reveal className="venue-gallery-wrap">
         <div className="subsection-heading">
           <h3>照片導覽</h3>

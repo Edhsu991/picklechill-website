@@ -10,6 +10,8 @@ export const venueInfo = {
   eyebrow: "VENUE GUIDE",
   location: "東寧路上，靠近勝利路",
   summary: "從台南一中網球場入口進來，左轉走到底就是匹克球場。",
+  mapEmbedUrl: "https://www.google.com/maps?q=%E5%8F%B0%E5%8D%97%E4%B8%80%E4%B8%AD%E7%B6%B2%E7%90%83%E5%A0%B4&output=embed",
+  mapExternalUrl: "https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E4%B8%80%E4%B8%AD%E7%B6%B2%E7%90%83%E5%A0%B4",
   steps: [
     "抵達東寧路上、靠近勝利路的台南一中網球場入口。",
     "從台南一中網球場入口進來。",
