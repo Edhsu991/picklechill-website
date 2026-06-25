@@ -9,7 +9,7 @@ export default function Hero() {
       <div className="hero-orb orb-two" />
       <Reveal className="hero-copy">
         <Eyebrow>TAINAN PICKLEBALL COMMUNITY</Eyebrow>
-        <h1>一起上場，<br /><em>匹</em>出好心情。</h1>
+        <h1>台南匹克球，<br />一<em>揪</em>就開打。</h1>
         <p className="hero-intro">從第一次拿起球拍，到找到一起打球的朋友。<br />匹咖揪陪你輕鬆開始，痛快開打。</p>
         <div className="hero-actions">
           <a
@@ -28,7 +28,7 @@ export default function Hero() {
       </Reveal>
       <Reveal className="hero-visual" delay="delay">
         <div className="hero-card"><img src="assets/event-poster.png" alt="匹咖揪每週揪團招生資訊" /></div>
-        <div className="floating-tag tag-top">PICKLE<br />&amp; CHILL</div>
+        <div className="floating-tag tag-top">PICKLE &amp; CHILL</div>
         <div className="floating-tag tag-bottom"><span>●</span> 新手也能輕鬆加入</div>
       </Reveal>
     </section>
