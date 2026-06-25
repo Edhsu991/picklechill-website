@@ -12,6 +12,7 @@ import Ticker from "./components/sections/Ticker";
 import SiteNotice from "./components/ui/SiteNotice";
 import Toast from "./components/ui/Toast";
 import FontSizeControl from "./components/ui/FontSizeControl";
+import VersionStamp from "./components/ui/VersionStamp";
 import useFontSize from "./hooks/useFontSize";
 import useTheme from "./hooks/useTheme";
 
@@ -61,6 +62,7 @@ export default function App() {
       )}
       <Footer />
       <FontSizeControl fontSize={fontSize} onChange={setFontSize} />
+      <VersionStamp />
       <Toast message={toastMessage} onDismiss={() => setToastMessage("")} />
       {showSiteNotice && <SiteNotice onDismiss={() => setShowSiteNotice(false)} />}
     </>
