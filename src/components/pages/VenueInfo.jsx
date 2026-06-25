@@ -15,7 +15,8 @@ export default function VenueInfo() {
         <Reveal as="article" className="venue-card">
           <span>LOCATION</span>
           <h2>{venueInfo.location}</h2>
-          <p>台南一中網球場進來後，左轉走到底就是匹克球場。</p>
+          <p>{venueInfo.addressHint}</p>
+          <p>從網球場入口進來後，左轉走到底就是匹克球場。</p>
         </Reveal>
 
         <Reveal as="ol" className="venue-steps" delay="delay">
@@ -44,6 +45,9 @@ export default function VenueInfo() {
             allowFullScreen
           />
         </div>
+        <p className="venue-map-note">
+          導航請定位「{venueInfo.location}」，到入口後依照上方路線走到底。
+        </p>
       </Reveal>
 
       <Reveal className="venue-gallery-wrap">
