@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function useReveal() {
   const elementRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -10,7 +11,7 @@ export default function useReveal() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          element.classList.add("visible");
+          setIsVisible(true);
           observer.unobserve(element);
         }
       },
@@ -21,5 +22,5 @@ export default function useReveal() {
     return () => observer.disconnect();
   }, []);
 
-  return elementRef;
+  return { ref: elementRef, isVisible };
 }
