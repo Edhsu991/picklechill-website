@@ -20,11 +20,33 @@ export const venueInfo = {
     "走到底就會看到匹克球場。",
   ],
   photoFolder: "public/assets/venue/",
-  photoPathExample: "assets/venue/court.jpg",
+  photoPathExample: "assets/venue/pickleball-court-view.jpg",
   gallery: [
-    { label: "入口位置", description: "可放網球場入口或東寧路外觀照片。", src: "" },
-    { label: "左轉路線", description: "可放進場後左轉方向照片。", src: "" },
-    { label: "球場位置", description: "可放走到底後的匹克球場照片。", src: "" },
+    {
+      label: "入口外觀",
+      description: "從東寧路靠近勝利路的位置，可以看到台南一中網球場入口。",
+      src: "assets/venue/venue-entrance-wide.jpg",
+    },
+    {
+      label: "網球場入口",
+      description: "認明台南一中網球場門牌，從這個入口進入。",
+      src: "assets/venue/tennis-court-gate.jpg",
+    },
+    {
+      label: "場邊走道",
+      description: "進入後沿著球場旁的走道前進。",
+      src: "assets/venue/court-side-walkway.jpg",
+    },
+    {
+      label: "左轉通道",
+      description: "看到通道後左轉，沿著路線繼續往底走。",
+      src: "assets/venue/left-turn-passage.jpg",
+    },
+    {
+      label: "匹克球場",
+      description: "走到底後即可抵達匹咖揪揪團使用的匹克球場。",
+      src: "assets/venue/pickleball-court-view.jpg",
+    },
   ],
 };
 
