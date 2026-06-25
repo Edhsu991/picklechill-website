@@ -5,9 +5,9 @@ import Reveal from "../ui/Reveal";
 export default function About() {
   return (
     <section id="about" className="section about">
-      <Reveal className="section-heading">
+      <Reveal className="section-heading about-heading">
         <Eyebrow>ABOUT PICKLECHILL</Eyebrow>
-        <h2>不只打球，<br />更是一起享受生活。</h2>
+        <h2>打球，<br />也一起享受生活。</h2>
       </Reveal>
       <Reveal className="about-content">
         <p className="lead">「匹咖揪」，台南一揪就來打匹克球！從 8 到 80 歲，都能輕鬆享受這項新運動。</p>
