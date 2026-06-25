@@ -5,9 +5,9 @@ import Reveal from "../ui/Reveal";
 export default function Coaches() {
   return (
     <section id="coaches" className="section coaches">
-      <Reveal className="section-heading">
+      <Reveal className="section-heading coach-heading">
         <Eyebrow>MEET THE COACHES</Eyebrow>
-        <h2>專業帶領，<br />讓每一次上場更有收穫。</h2>
+        <h2>專業教練帶路，<br />上場更有收穫。</h2>
       </Reveal>
       <div className="coach-grid">
         {coaches.map((coach, index) => (
@@ -22,7 +22,7 @@ export default function Coaches() {
                 <span>{coach.initials}</span>
                 <small>COACH</small>
               </div>
-              <div>
+              <div className="coach-profile-info">
                 <p>{coach.englishName}</p>
                 <h3>{coach.name} <small>教練</small></h3>
                 <span>{coach.role}</span>
@@ -37,7 +37,7 @@ export default function Coaches() {
           </Reveal>
         ))}
       </div>
-      <p className="coach-photo-note">教練照片可於後續補上，版面已預留人物視覺位置。</p>
+      {/* 教練照片可於後續補上，版面已預留人物視覺位置。 */}
     </section>
   );
 }
