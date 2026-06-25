@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { lineGroupUrl, navigation } from "../../data/siteContent";
 import ThemeToggle from "../ui/ThemeToggle";
 
 export default function Header({ theme, onToggleTheme, page }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
 
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 180);
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="site-header">
+    <header className={`site-header${isScrolled ? " is-rail" : ""}`}>
       <a className="brand" href={page === "home" ? "#top" : "#/"} aria-label="回到首頁" onClick={closeMenu}>
         <img src="assets/logo.jpg" alt="匹咖揪 PickleChill Logo" />
         <span>
