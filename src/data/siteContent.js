@@ -1,8 +1,29 @@
 export const navigation = [
   { label: "關於我們", href: "#about" },
   { label: "揪團資訊", href: "#events" },
+  { label: "場地資訊", href: "#/venue" },
   { label: "課程服務", href: "#courses" },
 ];
+
+export const venueInfo = {
+  title: "場地資訊",
+  eyebrow: "VENUE GUIDE",
+  location: "東寧路上，靠近勝利路",
+  summary: "從台南一中網球場入口進來，左轉走到底就是匹克球場。",
+  steps: [
+    "抵達東寧路上、靠近勝利路的台南一中網球場入口。",
+    "從台南一中網球場入口進來。",
+    "進來後左轉，沿著路走到底。",
+    "走到底就會看到匹克球場。",
+  ],
+  photoFolder: "public/assets/venue/",
+  photoPathExample: "assets/venue/court.jpg",
+  gallery: [
+    { label: "入口位置", description: "可放網球場入口或東寧路外觀照片。", src: "" },
+    { label: "左轉路線", description: "可放進場後左轉方向照片。", src: "" },
+    { label: "球場位置", description: "可放走到底後的匹克球場照片。", src: "" },
+  ],
+};
 
 export const heroHighlights = [
   { title: "每週六、日", detail: "固定開揪" },

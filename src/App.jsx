@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
 import TournamentScoring from "./components/pages/TournamentScoring";
+import VenueInfo from "./components/pages/VenueInfo";
 import About from "./components/sections/About";
 import Contact from "./components/sections/Contact";
 import Coaches from "./components/sections/Coaches";
@@ -19,20 +20,24 @@ import useTheme from "./hooks/useTheme";
 export default function App() {
   const [toastMessage, setToastMessage] = useState("");
   const [showSiteNotice, setShowSiteNotice] = useState(true);
-  const [page, setPage] = useState(() =>
-    window.location.hash.startsWith("#/scoring") ? "scoring" : "home",
-  );
+  const getCurrentPage = () => {
+    if (window.location.hash.startsWith("#/scoring")) return "scoring";
+    if (window.location.hash.startsWith("#/venue")) return "venue";
+    return "home";
+  };
+  const [page, setPage] = useState(getCurrentPage);
   const { fontSize, setFontSize } = useFontSize();
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleHashChange = () => {
-      const isScoring = window.location.hash.startsWith("#/scoring");
-      setPage(isScoring ? "scoring" : "home");
+      const nextPage = getCurrentPage();
+      setPage(nextPage);
 
       window.setTimeout(() => {
         const targetId = window.location.hash.replace("#", "");
-        const target = !isScoring && targetId ? document.getElementById(targetId) : null;
+        const isPageRoute = window.location.hash.startsWith("#/");
+        const target = nextPage === "home" && !isPageRoute && targetId ? document.getElementById(targetId) : null;
         if (target) target.scrollIntoView();
         else window.scrollTo({ top: 0, behavior: "instant" });
       }, 0);
@@ -48,6 +53,10 @@ export default function App() {
       {page === "scoring" ? (
         <main id="top">
           <TournamentScoring />
+        </main>
+      ) : page === "venue" ? (
+        <main id="top">
+          <VenueInfo />
         </main>
       ) : (
         <main id="top">

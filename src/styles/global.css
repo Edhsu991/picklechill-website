@@ -462,6 +462,84 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
 .reveal.delay-two { transition-delay: .24s; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
+.venue-page {
+  min-height: 100vh;
+  padding: 150px max(24px, calc((100vw - 1180px) / 2)) 100px;
+  background: var(--cream);
+}
+.venue-hero {
+  display: grid;
+  grid-template-columns: .7fr 1.3fr;
+  align-items: end;
+  gap: 60px;
+}
+.venue-hero h1 { margin: 0; font-size: clamp(64px, 7vw, 104px); letter-spacing: -.08em; }
+.venue-summary { max-width: 620px; margin: 0; color: var(--muted-text); font-size: 20px; font-weight: 800; line-height: 1.8; }
+.venue-layout { margin-top: 70px; display: grid; grid-template-columns: .82fr 1.18fr; gap: 22px; }
+.venue-card {
+  min-height: 420px;
+  padding: 34px;
+  border-radius: var(--radius);
+  color: var(--white);
+  background: var(--green);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.venue-card span { color: var(--yellow); font: 11px "Archivo Black"; letter-spacing: .16em; }
+.venue-card h2 { margin: 18px 0 16px; font-size: clamp(34px, 4vw, 58px); letter-spacing: -.06em; }
+.venue-card p { margin: 0; color: rgba(255,255,255,.72); font-size: 17px; font-weight: 800; line-height: 1.85; }
+.venue-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+.venue-steps li {
+  min-height: 96px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface);
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  align-items: center;
+  gap: 18px;
+}
+.venue-steps span { color: var(--teal); font: 24px "Archivo Black"; }
+.venue-steps p { margin: 0; color: var(--ink); font-size: 18px; font-weight: 800; line-height: 1.7; }
+.venue-gallery-wrap { margin-top: 70px; }
+.venue-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.venue-photo-card {
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  overflow: hidden;
+  box-shadow: 0 14px 34px var(--shadow);
+}
+.venue-photo-card img, .venue-photo-placeholder { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+.venue-photo-placeholder {
+  color: var(--white);
+  background: linear-gradient(135deg, var(--green), var(--teal));
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  text-align: center;
+}
+.venue-photo-placeholder strong { font-size: 22px; }
+.venue-photo-placeholder span { color: rgba(255,255,255,.72); font-size: 12px; font-weight: 800; }
+.venue-photo-card div:last-child { padding: 20px; }
+.venue-photo-card h4 { margin: 0 0 8px; font-size: 22px; }
+.venue-photo-card p { margin: 0; color: var(--muted-text); font-size: 13px; font-weight: 700; line-height: 1.7; }
+.venue-photo-help {
+  margin: 18px 0 0;
+  color: var(--muted-text);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.8;
+}
+.venue-photo-help code {
+  padding: 2px 6px;
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(61,183,173,.12);
+}
+
 .scoring-page { min-height: 100vh; padding-top: 126px; }
 .scoring-page:fullscreen { overflow-y: auto; background: var(--cream); }
 .scoring-hero {
@@ -713,6 +791,11 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
   .hero-visual { min-height: 560px; }
   .tag-top { right: 3%; top: -34px; }
   .tag-bottom { left: 5%; bottom: -46px; }
+  .venue-page { padding-top: 130px; }
+  .venue-hero, .venue-layout { grid-template-columns: 1fr; gap: 24px; }
+  .venue-hero h1 { font-size: 68px; }
+  .venue-card { min-height: 320px; }
+  .venue-gallery { grid-template-columns: repeat(2, 1fr); }
   .section-heading { grid-template-columns: 1fr; gap: 20px; }
   .about-content { margin-left: 0; }
   .event-section { grid-template-columns: 1fr; }
@@ -768,6 +851,15 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
   .section { padding-top: 85px; padding-bottom: 85px; }
   .section-heading { margin-bottom: 42px; }
   .section-heading h2, .event-section h2, .contact h2 { font-size: 48px; }
+  .venue-page { padding-top: 112px; padding-bottom: 78px; }
+  .venue-hero h1 { font-size: 54px; }
+  .venue-summary { font-size: 17px; }
+  .venue-layout, .venue-gallery-wrap { margin-top: 44px; }
+  .venue-card { min-height: 260px; padding: 26px; }
+  .venue-card h2 { font-size: 38px; }
+  .venue-steps li { grid-template-columns: 44px 1fr; padding: 20px; }
+  .venue-steps p { font-size: 16px; }
+  .venue-gallery { grid-template-columns: 1fr; }
   .about-heading h2 { font-size: 42px; }
   .about-content .lead { font-size: 20px; }
   .values { margin-left: 0; grid-template-columns: 1fr; gap: 14px; }
