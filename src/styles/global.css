@@ -209,9 +209,12 @@ h1 em, .contact h2 em { color: var(--teal); font-style: normal; }
 
 .courses { background: var(--muted-surface); }
 .course-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
-.course-card { min-height: 440px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); display: flex; flex-direction: column; transition: transform .25s; }
-.course-card:hover { transform: translateY(-7px); }
+.course-card { position: relative; min-height: 440px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); display: flex; flex-direction: column; transition: transform .25s, box-shadow .25s; }
+.course-card:hover, .course-card.expanded { transform: translateY(-7px); }
+.course-card.expanded { box-shadow: 0 24px 55px rgba(16,43,42,.13); }
 .course-card.featured { color: var(--white); background: var(--teal); border-color: transparent; }
+.course-card-trigger { width: 100%; min-height: 386px; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; display: flex; flex: 1; flex-direction: column; }
+.course-card-trigger:focus-visible { outline: 3px solid var(--yellow); outline-offset: 6px; border-radius: 22px; }
 .course-number { color: #84918f; font: 12px "Archivo Black"; }
 .featured .course-number { color: rgba(255,255,255,.6); }
 .course-badge { position: absolute; align-self: center; padding: 6px 12px; border-radius: 999px; color: var(--on-yellow); background: var(--yellow); font-size: 10px; font-weight: 800; }
@@ -220,10 +223,27 @@ h1 em, .contact h2 em { color: var(--teal); font-style: normal; }
 .course-card h3 { margin: 0 0 14px; font-size: 25px; }
 .course-card span { color: var(--muted-text); font-size: 13px; line-height: 1.7; }
 .featured span { color: rgba(255,255,255,.75); }
-.course-card small { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); color: #899391; font-weight: 700; }
+.course-expand { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); color: #899391; font-weight: 900; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.course-expand span { color: inherit; font-size: 13px; letter-spacing: .04em; }
+.course-expand strong { width: 34px; height: 34px; border: 1px solid currentColor; border-radius: 50%; display: grid; place-items: center; font-size: 20px; line-height: 1; }
+.course-details { margin-top: 22px; padding: 20px; border-radius: 22px; background: rgba(16,43,42,.05); display: grid; gap: 16px; }
+.course-details[hidden] { display: none; }
+.course-detail-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 11px; }
+.course-detail-list li { position: relative; padding-left: 18px; color: var(--muted-text); font-size: 14px; font-weight: 700; line-height: 1.7; }
+.course-detail-list li::before { content: ""; position: absolute; top: .72em; left: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+.course-audience { padding-top: 14px; border-top: 1px solid rgba(16,43,42,.12); display: grid; gap: 6px; }
+.course-audience strong { font-size: 12px; letter-spacing: .12em; }
+.course-audience span { font-size: 14px; font-weight: 700; }
+.course-note { color: #899391; font-size: 13px; font-weight: 800; }
+.course-card .course-action { margin: 0; color: var(--ink); font-size: 13px; font-weight: 900; line-height: 1.4; letter-spacing: .02em; }
 .course-card.consult { color: var(--white); background: var(--green); border-color: transparent; }
-.course-card.consult .course-number, .course-card.consult span, .course-card.consult small { color: rgba(255,255,255,.68); }
-.course-card.consult small { border-color: rgba(255,255,255,.18); }
+.featured .course-expand, .consult .course-expand { border-color: rgba(255,255,255,.22); color: rgba(255,255,255,.75); }
+.featured .course-details, .consult .course-details { background: rgba(255,255,255,.12); }
+.featured .course-detail-list li, .consult .course-detail-list li, .featured .course-audience span, .consult .course-audience span, .featured .course-note, .consult .course-note { color: rgba(255,255,255,.78); }
+.featured .course-detail-list li::before, .consult .course-detail-list li::before { background: var(--yellow); }
+.featured .course-audience, .consult .course-audience { border-color: rgba(255,255,255,.18); }
+.featured .course-action, .consult .course-action { color: var(--yellow); }
+.course-card.consult .course-number, .course-card.consult span { color: rgba(255,255,255,.68); }
 
 .coaches { background: var(--cream); }
 .coach-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
