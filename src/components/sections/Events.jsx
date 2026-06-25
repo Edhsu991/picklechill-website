@@ -23,7 +23,11 @@ export default function Events() {
           <article key={item.label}>
             <span className="detail-icon">{item.icon}</span>
             <p>{item.label}</p>
-            <h3>{item.lines[0]}<br />{item.smallLastLine ? <small>{item.lines[1]}</small> : item.lines[1]}</h3>
+            <h3>
+              {item.lines[0]}
+              <br />
+              {item.smallLastLine ? <small>{item.lines[1]}</small> : <span>{item.lines[1]}</span>}
+            </h3>
           </article>
         ))}
         <div className="event-note">球與球拍用具皆有提供</div>
