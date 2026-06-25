@@ -19,8 +19,6 @@ export const venueInfo = {
     "進來後左轉，沿著球場旁邊的路線往裡面走。",
     "走到底就會看到匹克球場。",
   ],
-  photoFolder: "public/assets/venue/",
-  photoPathExample: "assets/venue/pickleball-court-view.jpg",
   gallery: [
     {
       label: "入口外觀",

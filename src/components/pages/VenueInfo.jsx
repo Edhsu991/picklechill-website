@@ -53,7 +53,6 @@ export default function VenueInfo() {
       <Reveal className="venue-gallery-wrap">
         <div className="subsection-heading">
           <h3>照片導覽</h3>
-          <small>照片放在 {venueInfo.photoFolder}</small>
         </div>
         <div className="venue-gallery">
           {venueInfo.gallery.map((photo) => (
@@ -73,10 +72,6 @@ export default function VenueInfo() {
             </article>
           ))}
         </div>
-        <p className="venue-photo-help">
-          之後照片建議放在 <code>{venueInfo.photoFolder}</code>，並在 <code>src/data/siteContent.js</code> 的
-          gallery 裡填入像 <code>{venueInfo.photoPathExample}</code> 這樣的路徑。
-        </p>
       </Reveal>
     </section>
   );
