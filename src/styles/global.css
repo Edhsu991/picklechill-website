@@ -793,7 +793,6 @@ footer { padding: 30px max(24px, calc((100vw - 1180px) / 2)); color: var(--muted
   .font-size-control { right: 10px; bottom: 10px; }
   .font-size-control > span { display: none; }
   .version-stamp { left: 10px; bottom: 10px; padding: 7px 9px; gap: 5px; font-size: 9px; }
-  .version-stamp span { display: none; }
   .scoring-page { padding-top: 92px; }
   .scoring-hero { min-height: 0; padding-top: 60px; padding-bottom: 60px; }
   .scoring-hero h1 { font-size: 58px; }

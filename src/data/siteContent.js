@@ -4,8 +4,6 @@ export const navigation = [
   { label: "課程服務", href: "#courses" },
 ];
 
-export const siteLastUpdated = "2026-06-25 12:02";
-
 export const heroHighlights = [
   { title: "每週六、日", detail: "固定開揪" },
   { title: "新手友善", detail: "提供球與球拍" },
