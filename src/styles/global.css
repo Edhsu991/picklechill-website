@@ -277,12 +277,12 @@ h1 em, .contact h2 em { color: var(--teal); font-style: normal; }
 [data-font-size="large"] .event-details h3 { font-size: clamp(23px, 1.55vw, 31px); }
 
 .courses { background: var(--muted-surface); }
-.course-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
-.course-card { position: relative; min-height: 440px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); display: flex; flex-direction: column; transition: transform .25s, box-shadow .25s; }
+.course-grid { display: grid; grid-template-columns: repeat(2, 1fr); align-items: start; gap: 18px; }
+.course-card { position: relative; min-height: 360px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); display: flex; flex-direction: column; transition: transform .25s, box-shadow .25s; }
 .course-card:hover, .course-card.expanded { transform: translateY(-7px); }
-.course-card.expanded { box-shadow: 0 24px 55px rgba(16,43,42,.13); }
+.course-card.expanded { min-height: 0; box-shadow: 0 24px 55px rgba(16,43,42,.13); }
 .course-card.featured { color: var(--white); background: var(--teal); border-color: transparent; }
-.course-card-trigger { width: 100%; min-height: 386px; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; display: flex; flex: 1; flex-direction: column; }
+.course-card-trigger { width: 100%; min-height: 304px; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; display: flex; flex: 1; flex-direction: column; }
 .course-card-trigger:focus-visible { outline: 3px solid var(--yellow); outline-offset: 6px; border-radius: 22px; }
 .course-number { color: #84918f; font: 12px "Archivo Black"; }
 .featured .course-number { color: rgba(255,255,255,.6); }

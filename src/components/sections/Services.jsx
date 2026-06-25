@@ -4,7 +4,7 @@ import Eyebrow from "../ui/Eyebrow";
 import Reveal from "../ui/Reveal";
 
 export default function Services() {
-  const [activeService, setActiveService] = useState(services[0]?.number);
+  const [activeService, setActiveService] = useState(null);
 
   return (
     <section id="courses" className="section courses">
